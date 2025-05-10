@@ -2,7 +2,7 @@
 include '../database/db.php'; 
 $conn = getDatabaseConnection();
 
-// Handle deletion
+
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     $deleteQuery = "DELETE FROM products WHERE id = $id";
@@ -11,7 +11,7 @@ if (isset($_GET['delete'])) {
     exit();
 }
 
-// Handle updating product
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_product'])) {
     $id = $_POST['id'];
     $product_name = mysqli_real_escape_string($conn, $_POST['product_name']);
@@ -32,20 +32,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_product'])) {
     exit();
 }
 
-// Handle adding new product
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
     $product_name = mysqli_real_escape_string($conn, $_POST['product_name']);
     $category = mysqli_real_escape_string($conn, $_POST['category']);
     $quantity = (int)$_POST['quantity'];
     $price = (float)$_POST['price'];
     
-    // Generate a unique SKU
+
     $sku = strtoupper(substr(str_replace(' ', '', $product_name), 0, 3)) . '-' . date('Ymd') . '-' . rand(100, 999);
     
-    // Default image path
+
     $image_path = "default_product.jpg";
     
-    // Handle image upload if present
+
     if (isset($_FILES['image']) && $_FILES['image']['size'] > 0) {
         $target_dir = "uploads/";
         if (!is_dir($target_dir)) {
@@ -69,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
     exit();
 }
 
-// Build dynamic SQL conditions based on filters
+
 $conditions = [];
 
 if (!empty($_GET['search'])) {
@@ -124,7 +123,7 @@ if (!$result) {
         </button>
       </div>
 
-      <!-- Filters Form -->
+
       <form method="GET" class="filters">
         <input type="text" name="search" placeholder="Search product..."
           value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
@@ -145,7 +144,7 @@ if (!$result) {
         <button type="submit" style="display: none;"></button>
       </form>
 
-      <!-- Inventory Table -->
+
       <table>
         <thead>
           <tr>
@@ -193,7 +192,6 @@ if (!$result) {
     </div>
   </section>
 
-  <!-- Edit Form Modal -->
   <div class="modal-overlay" id="editFormModal">
     <div class="modal-container">
       <div class="modal-header">
@@ -229,7 +227,7 @@ if (!$result) {
     </div>
   </div>
 
-  <!-- Add Product Modal -->
+
   <div class="modal-overlay" id="addFormModal">
     <div class="modal-container">
       <div class="modal-header">
@@ -284,7 +282,7 @@ if (!$result) {
     document.getElementById('editFormModal').style.display = 'none';
   }
 
-  // Functions for Add Modal
+
   function openAddForm() {
     document.getElementById('addFormModal').style.display = 'flex';
   }
@@ -293,7 +291,7 @@ if (!$result) {
     document.getElementById('addFormModal').style.display = 'none';
   }
 
-  // Close modals when clicking outside the form container
+
   window.onclick = function(event) {
     if (event.target == document.getElementById('editFormModal')) {
       closeEditForm();
