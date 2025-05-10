@@ -20,3 +20,9 @@ modeSwitch.addEventListener("click", () => {
   }
 });
 
+  window.addEventListener('load', () => {
+    document.body.classList.add('transition-enabled');
+    document.querySelector('.sidebar')?.classList.add('transition-enabled');
+    document.querySelector('.home')?.classList.add('transition-enabled');
+  });
+

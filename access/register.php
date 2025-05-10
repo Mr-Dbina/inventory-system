@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION["created_at"] = $created_at;
             $_SESSION["role"] = $role;
 
-            header("Location: login.php");
+            header("Location: ../access/login.php");
             exit;
         } else {
             echo "Error: " . $stmt->error;
@@ -112,29 +112,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <title>FINAL PROJECT - Register</title>
   <link rel="icon" href="/image/logo.png">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-  .hero {
-    background-image: url('/image/gym.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    color: white;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .hero .content {
-    max-width: 600px;
-    text-align: center;
-  }
-
-  .navbar {
-    background-color: white;
-  }
-  </style>
 </head>
 
 <body>
@@ -181,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <button type="submit" class="btn btn-outline-primary fw-bold">Register</button>
               </div>
               <div class="col d-grid">
-                <a href="/login.php" class="btn btn-outline-secondary fw-bold">Cancel</a>
+                <a href="../access/login.php" class="btn btn-outline-secondary fw-bold">Cancel</a>
               </div>
             </div>
           </form>

@@ -22,13 +22,13 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
 
         if ($dbConnection) {
             $statement = $dbConnection->prepare(
-                "SELECT id, first_name, last_name, phone, address, password, created_at FROM users WHERE email = ?"
+                "SELECT id, first_name, last_name, phone, address, role, password, created_at FROM users WHERE email = ?"
             );
 
             if ($statement) {
                 $statement->bind_param('s', $email);
                 $statement->execute();
-                $statement->bind_result($id, $first_name, $last_name, $phone, $address, $stored_password, $created_at);
+                $statement->bind_result($id, $first_name, $last_name, $phone, $address, $role, $stored_password, $created_at);
 
                 if ($statement->fetch()) {
                     // Verify the password
@@ -40,9 +40,10 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
                         $_SESSION["email"] = $email;
                         $_SESSION["phone"] = $phone;
                         $_SESSION["address"] = $address;
+                        $_SESSION["role"] = $role;
                         $_SESSION["created_at"] = $created_at;
 
-                        header("Location: /views/profile.php");
+                        header("Location: ../views/profile.php");
                         exit;
                     } else {
                         $error = "Invalid email or password!";
@@ -62,53 +63,71 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
 }
 ?>
 
-<!-- Login Form -->
-<div class="container-fluid bg-cover" style="background-image: url('/image/gym.jpg'); height: 100vh;">
-  <div class="d-flex justify-content-center align-items-center h-100">
-    <div class="border shadow p-4" style="width: 400px; background-color: rgba(0, 0, 0, 0.6); border-radius: 8px;">
-      <div class="text-center mb-3">
-        <img src="logo.png" width="50" height="50" alt="Logo">
-      </div>
-      <h2 class="text-center mb-4 text-white">LOGIN TO INVENTORY</h2>
-      <hr style="border-color: white;" />
+<!DOCTYPE html>
+<html>
 
-      <!-- Error Display -->
-      <?php if (!empty($error)) { ?>
-      <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <strong><?= htmlspecialchars($error) ?></strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-      <?php } ?>
+<head>
+  <title>LELELEMON</title>
+  <link rel="stylesheet" type="text/css" href="../style/responsive.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
 
-      <!-- Login Form -->
+<body>
+  <img class="wave" src="../views/images/wavee.png">
+  <div class="container">
+    <div class="img">
+      <img src="../views/images/remove.png">
+    </div>
+    <div class="login-content">
       <form method="post">
-        <div class="mb-3">
-          <label class="form-label text-white">Email</label>
-          <input class="form-control <?= !empty($error) ? 'is-invalid' : '' ?>" name="email"
-            value="<?= htmlspecialchars($email) ?>" required />
-        </div>
-        <div class="mb-3">
-          <label class="form-label text-white">Password</label>
-          <input class="form-control <?= !empty($error) ? 'is-invalid' : '' ?>" type="password" name="password"
-            required />
-        </div>
-        <div class="row mb-3">
-          <div class="col text-center">
-            <a href="forgot.php" class="link-primary">Forgot Password?</a>
+        <h2 class="title">Welcome To Inventory</h2>
+
+        <?php if (!empty($error)): ?>
+        <div class="alert alert-danger"><?= $error ?></div>
+        <?php endif; ?>
+
+        <div class="input-div one">
+          <div class="i">
+            <i class="bx bxs-user user"></i>
+          </div>
+          <div class="div">
+            <h5>Email</h5>
+            <input class="input <?= !empty($error) ? 'is-invalid' : '' ?>" name="email" type="email"
+              value="<?= htmlspecialchars($email) ?>" required />
           </div>
         </div>
-        <div class="row mb-3">
-          <div class="col d-grid">
-            <button type="submit" class="btn btn-outline-primary">Login</button>
+
+        <div class="input-div pass">
+          <div class="i">
+            <i class="bx bxs-lock-alt"></i>
+          </div>
+          <div class="div input-with-icon" style="position: relative;">
+            <h5>Password</h5>
+            <input id="password" class="input <?= !empty($error) ? 'is-invalid' : '' ?>" type="password" name="password"
+              required />
+            <i id="password-toggle" class='bx bxs-lock-open-alt icon-right'
+              style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: #FEDF05; cursor: pointer;"></i>
           </div>
         </div>
-        <div class="row mb-5">
-          <div class="col d-grid">
-            <p class="text-white text-center">Don't Have an account? <a href="register.php" class="link-primary">Sign
-                Up</a></p>
-          </div>
+
+        <div class="form-options">
+          <label><input type="checkbox" /> Remember me</label>
+          <a href="../access/forgot.php">Forgot Password?</a>
         </div>
+
+        <input type="submit" class="btn" value="Login">
+        <p class="signup-text"> Don't have an account? <a href="register.php">Sign Up</a>
+        </p>
       </form>
     </div>
   </div>
-</div>
+
+  <script type="text/javascript" src="../js/responsive.js"></script>
+</body>
+
+</html>
