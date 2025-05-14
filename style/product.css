@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
 * {
@@ -16,17 +17,17 @@
   --mode-color: #f4f3f3;
   --toggle-color: #ddd;
   --text-color: #332f2f;
-  
-  /* Simplified transitions with reduced duration */
-  --tran-02: all 0.2s ease;
-  --tran-03: all 0.3s ease;
+  --tran-2: all 0.2s ease;
+  --tran-3: all 0.3s ease;
+  --tran-4: all 0.4s ease;
+  --tran-5: all 0.5s ease;
 }
 
 body {
   display: flex;
   height: 100vh;
   background: var(--body-color);
-  transition: background-color 0.3s ease;
+  transition: var(--tran-5);
 }
 
 body.dark {
@@ -39,7 +40,6 @@ body.dark {
   --text-color: #CCC;
 }
 
-/* Sidebar with optimized transitions */
 .sidebar {
   position: fixed;
   top: 0;
@@ -48,9 +48,9 @@ body.dark {
   width: 250px;
   padding: 10px 14px;
   background: var(--sidebar-color);
+  transition: var(--tran-5);
   z-index: 100;
-  transition: width 0.3 ease-in-out, background-color 0.3 ease-in-out;
-} 
+}
 
 .sidebar .menu {
   margin-top: 50px;
@@ -64,9 +64,9 @@ body.dark {
   font-size: 16px;
   font-weight: 500;
   color: var(--sidebar-text-color);
+  transition: var(--tran-3);
   white-space: nowrap;
   opacity: 1;
-  transition: opacity 0.2s ease;
 }
 
 .sidebar.close .text {
@@ -95,12 +95,12 @@ body.dark {
   margin-left: -10px;
   min-width: 60px;
   color: var(--text-color);
-  transition: color 0.2s ease;
+  transition: var(--tran-2);
 }
 
 .sidebar li .text {
   color: var(--text-color);
-  transition: color 0.2s ease;
+  transition: var(--tran-2);
 }
 
 .sidebar header {
@@ -148,7 +148,7 @@ body.dark {
   color: var(--sidebar-color);
   font-size: 22px;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: var(--tran-3);
 }
 
 .sidebar.close header .toggle {
@@ -165,7 +165,7 @@ body.dark .sidebar header .toggle {
   display: flex;
   align-items: center;
   border-radius: 6px;
-  transition: background-color 0.2s ease;
+  transition: var(--tran-4);
   padding: 0 10px;
   gap: 20px;
   width: 100%;
@@ -207,7 +207,7 @@ body.dark .sidebar li a:hover .text {
 
 .menu-bar .mode i {
   position: absolute;
-  transition: opacity 0.2s ease;
+  transition: var(--tran-3);
 }
 
 .menu-bar .mode i.sun {
@@ -237,6 +237,7 @@ body.dark .menu-bar .mode i.moon {
   cursor: pointer;
   border-radius: 6px;
   background: var(--primary-color);
+  transition: var(--tran-5);
 }
 
 .toggle-switch .switch {
@@ -257,54 +258,36 @@ body.dark .menu-bar .mode i.moon {
   left: 5px;
   transform: translateY(-50%);
   background: var(--sidebar-color);
-  transition: left 0.3s ease;
+  transition: var(--tran-3);
 }
 
 body.dark .switch::before {
   left: 24px;
 }
 
-/* Home section with optimized transitions */
+/* Home Section */
 .home {
   position: relative;
   height: 100vh;
   left: 250px;
   width: calc(100% - 250px);
   background: var(--body-color);
-  transition: left 0.3s ease, width 0.3s ease;
+  transition: var(--tran-5);
+  overflow-y: auto;
 }
 
 .home .text {
   font-size: 30px;
   font-weight: 500;
-  font-style: bold;
-  color: var(--sidebar-text-color);
+  color: var(--text-color);
   padding: 8px 40px;
 }
 
-.sidebar.close ~ .home {
+.sidebar.close~.home {
   left: 88px;
   width: calc(100% - 88px);
 }
 
-.content {
-  padding: 40px;
-}
-
-.filters {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-
-.filters input,
-.filters select {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
 
 table {
   width: 100%;
@@ -327,119 +310,44 @@ th {
   background: #f9f9f9;
 }
 
-.badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  background: #eee;
-}
-
-.stock-bar {
-  height: 8px;
-  border-radius: 4px;
-  margin-top: 6px;
-  background: #ddd;
-  overflow: hidden;
-}
-
-.stock-bar span {
-  display: block;
-  height: 100%;
-}
-
-.low {
-  color: red;
-}
-
-.high {
-  color: green;
-}
-
-.progress-low {
-  background: red;
-  width: 20%;
-}
-
-.progress-high {
-  background: green;
-  width: 90%;
-}
-
-.progress-normal {
-  background: orange;
-  width: 50%;
-}
-
-.actions {
-  position: relative;
-  display: inline-block;
-}
-
-.actions-menu {
-  display: none;
-  position: absolute;
-  right: 0;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-}
-
-.actions:hover .actions-menu {
-  display: block;
-}
-
-.actions-menu a {
-  display: block;
-  padding: 5px;
-  color: #333;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.actions-menu a:hover {
-  background: #f1f1f1;
-}
-
 .action-buttons {
   display: flex;
+  justify-content: center;
   gap: 10px;
 }
 
-.btn-edit,
-.btn-delete {
-  display: inline-flex;
+.action-buttons button,
+.action-buttons a {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 12px;
-  border-radius: 4px;
-  color: white;
-  text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.2s;
+  border-radius: 4px;
+  transition: var(--tran-3);
 }
 
 .btn-edit {
-  background-color: #4a7aff;
+  background-color: blue;
+  color: white;
+  border: none;
 }
 
 .btn-delete {
-  background-color: #ff4a4a;
+  background-color: #f44336;
+  color: white;
+  text-decoration: none;
+  border: none;
 }
 
-.btn-edit:hover {
-  background-color: #3567e6;
+.action-buttons button:hover,
+.action-buttons a:hover {
+  opacity: 0.8;
 }
 
-.btn-delete:hover {
-  background-color: #e63535;
-}
-
-.btn-edit i,
-.btn-delete i {
+.action-buttons i {
+  font-size: 1rem;
   margin-right: 5px;
 }
 .btn-reset {
@@ -502,286 +410,193 @@ th {
   transition: box-shadow 0.2s ease-in;
 }
 
-/* Edit form styles */
-.edit-form-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+
+.badge {
+  padding: 5px 10px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+  background-color: var(--primary-color-light);
+  color: var(--text-color);
 }
 
-.edit-form-container {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
-}
-
-.edit-form-header {
+.filters {
+  width: 95%;
+  margin: 0 auto 20px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+  gap: 15px;
 }
 
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #666;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 8px 12px;
+.filters input,
+.filters select {
+  padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  background-color: var(--sidebar-color);
+  color: var(--text-color);
 }
 
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
+.content {
+  padding: 25px;
 }
 
-.btn-save {
-  background-color: #DC7C00;
-  color: white;
-  border: none;
-  padding: 8px 16px;
+.content h1 {
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+  color: var(--text-color);
+}
+
+img {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  vertical-align: middle;
+  margin-right: 10px;
   border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn-cancel {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-edit,
-.btn-delete,
-.btn-add {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 12px;
-  border-radius: 4px;
-  color: white;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  border: none;
-}
-
-.btn-edit {
-  background-color: #4a7aff;
-}
-
-.btn-delete {
-  background-color: #ff4a4a;
 }
 
 .btn-add {
-  background-color: #FEDF05;
-  padding: 10px 20px;
-}
-
-.btn-edit:hover {
-  background-color: #3567e6;
-}
-
-.btn-delete:hover {
-  background-color: #e63535;
-}
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 4px;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: none;
+    background-color: #FEDF05;
+    padding: 10px 20px;
+  }
 
 .btn-add:hover {
   background-color: #E5C700;
 }
 
-.btn-edit i,
-.btn-delete i,
-.btn-add i {
-  margin-right: 5px;
-}
-
-/* Modal form styles */
+/* Modal styles */
 .modal-overlay {
+  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  display: none;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
 .modal-container {
-  background-color: white;
+  background-color: var(--sidebar-color);
+  width: 500px;
+  max-width: 90%;
   border-radius: 8px;
-  padding: 20px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  padding: 15px 20px;
+}
+
+.modal-header h2 {
+  color: black;
+  margin: 0;
+  font-size: 1.5rem;
 }
 
 .close-btn {
   background: none;
   border: none;
-  font-size: 24px;
+  color: var(--sidebar-color);
+  font-size: 1.5rem;
   cursor: pointer;
-  color: #666;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin: 15px 20px;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
+  color: var(--text-color);
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 8px 12px;
+  padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  background-color: var(--sidebar-color);
+  color: var(--text-color);
 }
 
 .form-actions {
   display: flex;
   justify-content: flex-end;
+  padding: 15px 20px;
   gap: 10px;
-  margin-top: 20px;
 }
 
-.btn-save,
 .btn-cancel {
-  border: none;
   padding: 8px 16px;
+  background-color: #f1f1f1;
+  color: #333;
+  border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .btn-save {
-  background-color: #DC7C00;
-  color: white;
-}
-
-.btn-cancel {
-  background-color: #f44336;
-  color: white;
-}
-/* Additional styling for filter enhancements */
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 20px;
-  align-items: flex-end;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  min-width: 150px;
-}
-
-.filter-group label {
-  font-size: 12px;
-  margin-bottom: 4px;
-  color: #555;
-}
-
-.price-range {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.price-range input {
-  width: 80px;
-}
-
-.price-range span {
-  color: #555;
-  font-size: 14px;
-}
-
-.filter-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.btn-filter {
   padding: 8px 16px;
   background-color: #DC7C00;
-  color: white;
+  color: black;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
-.btn-reset {
-  padding: 8px 16px;
-  background-color: #f1f1f1;
-  color: #333;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  cursor: pointer;
+/* Focus styles for accessibility */
+button:focus,
+a:focus,
+input:focus,
+select:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
-.sorting {
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-}
+/* Media queries for responsiveness */
+@media screen and (max-width: 768px) {
+  .sidebar {
+    width: 88px;
+  }
 
-.sort-label {
-  font-size: 14px;
-  color: #555;
+  .sidebar.close {
+    width: 0;
+    padding: 0;
+  }
+
+  .sidebar~.home,
+  .sidebar.close~.home {
+    left: 88px;
+    width: calc(100% - 88px);
+  }
+
+  .sidebar.close~.home {
+    left: 0;
+    width: 100%;
+  }
+
+  .sidebar .text {
+    opacity: 0;
+  }
+
+  .filters {
+    flex-direction: column;
+  }
 }

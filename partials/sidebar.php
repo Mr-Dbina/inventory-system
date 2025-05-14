@@ -2,7 +2,7 @@
   <header>
     <div class="img-text">
       <span class="img-text">
-        <img src="images/logo.png" alt="logo">
+        <img src="../views/images/logo.png" alt="logo">
       </span>
       <div class="text header-text">
         <span class="name">LELELEMON</span>
@@ -22,16 +22,21 @@
           </a>
         </li>
         <li class="nav-link">
+          <a href="../views/team.php">
+            <i class="bx bxs-user-account icon"></i>
+            <span class="text nav-text">Team</span>
+          </a>
+        </li>
+        <li class="nav-link">
           <a href="../views/inventory.php">
             <i class="bx bxs-cart icon"></i>
             <span class="text nav-text">Inventory</span>
           </a>
         </li>
-        </li>
         <li class="nav-link">
-          <a href="../views/report.php">
-            <i class="bx bxs-report icon"></i>
-            <span class="text nav-text">Report</span>
+          <a href="../views/products.php">
+            <i class='bx bx-package icon'></i>
+            <span class="text nav-text">Products</span>
           </a>
         </li>
       </ul>

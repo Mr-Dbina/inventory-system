@@ -2,89 +2,35 @@
 include '../database/db.php'; 
 $conn = getDatabaseConnection();
 
-
-if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
-    $deleteQuery = "DELETE FROM products WHERE id = $id";
-    mysqli_query($conn, $deleteQuery);
-    header("Location: inventory.php");
-    exit();
-}
-
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_product'])) {
     $id = $_POST['id'];
-    $product_name = mysqli_real_escape_string($conn, $_POST['product_name']);
-    $category = mysqli_real_escape_string($conn, $_POST['category']);
     $quantity = (int)$_POST['quantity'];
     $price = (float)$_POST['price'];
-    
+
     $updateQuery = "UPDATE products SET 
-                    product_name = '$product_name',
-                    category = '$category',
                     quantity = $quantity,
                     price = $price,
                     updated_at = NOW()
                     WHERE id = $id";
-                    
+
     mysqli_query($conn, $updateQuery);
-    header("Location: inventory.php");
+    header("Location: inventory_staff.php");
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
-    $product_name = mysqli_real_escape_string($conn, $_POST['product_name']);
-    $category = mysqli_real_escape_string($conn, $_POST['category']);
-    $quantity = (int)$_POST['quantity'];
-    $price = (float)$_POST['price'];
-    
-
-    $sku = strtoupper(substr(str_replace(' ', '', $product_name), 0, 3)) . '-' . date('Ymd') . '-' . rand(100, 999);
-    
-
-    $image_path = "default_product.jpg";
-    
-
-    if (isset($_FILES['image']) && $_FILES['image']['size'] > 0) {
-        $target_dir = "uploads/";
-        if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0755, true);
-        }
-        
-        $file_extension = pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION);
-        $new_filename = uniqid() . "." . $file_extension;
-        $target_file = $target_dir . $new_filename;
-        
-        if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-            $image_path = $target_file;
-        }
-    }
-    
-    $insertQuery = "INSERT INTO products (product_name, category, quantity, price, image_path, sku, created_at, updated_at) 
-                    VALUES ('$product_name', '$category', $quantity, $price, '$image_path', '$sku', NOW(), NOW())";
-                    
-    mysqli_query($conn, $insertQuery);
-    header("Location: inventory.php");
-    exit();
-}
-
-
-// Initialize conditions array for filtering
+// Filtering conditions
 $conditions = [];
 
-// Add search condition
 if (!empty($_GET['search'])) {
     $search = mysqli_real_escape_string($conn, $_GET['search']);
     $conditions[] = "(product_name LIKE '%$search%' OR category LIKE '%$search%' OR sku LIKE '%$search%')";
 }
 
-// Add category filter condition
 if (!empty($_GET['category']) && $_GET['category'] != 'All Categories') {
     $category = mysqli_real_escape_string($conn, $_GET['category']);
     $conditions[] = "category = '$category'";
 }
 
-// Add stock level filter condition
 if (!empty($_GET['stock']) && $_GET['stock'] != 'All Stock Levels') {
     $stockLevel = $_GET['stock'];
     if ($stockLevel == 'Low') {
@@ -96,7 +42,6 @@ if (!empty($_GET['stock']) && $_GET['stock'] != 'All Stock Levels') {
     }
 }
 
-// Add price range filter condition
 if (!empty($_GET['price_min']) || !empty($_GET['price_max'])) {
     if (!empty($_GET['price_min']) && !empty($_GET['price_max'])) {
         $min = (float)$_GET['price_min'];
@@ -111,32 +56,22 @@ if (!empty($_GET['price_min']) || !empty($_GET['price_max'])) {
     }
 }
 
-// Construct WHERE clause if any conditions exist
 $where = count($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
-// Add sorting parameter
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'updated_at';
 $direction = isset($_GET['direction']) ? $_GET['direction'] : 'ASC';
 
-// Validate sort field to prevent SQL injection
 $allowed_sort_fields = ['id', 'product_name', 'category', 'quantity', 'price', 'updated_at'];
 if (!in_array($sort, $allowed_sort_fields)) {
     $sort = 'updated_at';
 }
-
-// Validate direction to prevent SQL injection
 if ($direction != 'ASC' && $direction != 'DESC') {
     $direction = 'ASC';
 }
 
 $query = "SELECT * FROM products $where ORDER BY $sort $direction";
-
 $result = mysqli_query($conn, $query);
-if (!$result) {
-    die("Query failed: " . mysqli_error($conn));
-}
 
-// Get all unique categories for the filter dropdown
 $categoryQuery = "SELECT DISTINCT category FROM products ORDER BY category ASC";
 $categoryResult = mysqli_query($conn, $categoryQuery);
 ?>
@@ -147,11 +82,9 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inventory Management</title>
   <link rel="stylesheet" href="../style/inventory.css">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-  </style>
 </head>
 
 <body>
@@ -159,11 +92,7 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
     <div class="content">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <h1 class="text">INVENTORY</h1>
-        <button class="btn-add" onclick="openAddForm()">
-          <i class='bx bx-plus'></i> Add New Product
-        </button>
       </div>
-
       <!-- Enhanced filter form with more options -->
       <form method="GET" class="filters" id="filterForm">
         <div class="filter-group">
@@ -251,6 +180,7 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
         }
         ?>
       </div>
+      <!-- Filter form code remains the same -->
 
       <table>
         <thead>
@@ -265,48 +195,39 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
           </tr>
         </thead>
         <tbody>
-          <?php if (mysqli_num_rows($result) > 0): ?>
           <?php while($row = mysqli_fetch_assoc($result)): ?>
           <tr>
             <td><?= $row['id']; ?></td>
-            <td><img src="<?= $row['image_path']; ?>" width="40" padding="10px">
-              <?= htmlspecialchars($row['product_name']); ?></td>
+            <td><img src="<?= $row['image_path']; ?>" width="40"> <?= htmlspecialchars($row['product_name']); ?></td>
             <td><span class="badge"><?= htmlspecialchars($row['category']); ?></span></td>
-            <td><?= htmlspecialchars($row['sku'] ?? 'N/A'); ?></td>
+            <td><?= htmlspecialchars($row['sku']); ?></td>
             <td>
-              <?php 
-                  $stock = $row['quantity'];
-                  $level = $stock < 30 ? 'low' : ($stock < 70 ? 'normal' : 'high');
-                  echo "<span class='$level'>{$stock} units - " . ucfirst($level) . "</span>";
-                ?>
-              <div class="stock-bar"><span class="progress-<?= $level ?>"
-                  style="width: <?= min(100, ($stock / 100) * 100) ?>%"></span></div>
+              <?php
+              $stock = $row['quantity'];
+              $level = $stock < 30 ? 'low' : ($stock < 70 ? 'normal' : 'high');
+              echo "<span class='$level'>{$stock} units - " . ucfirst($level) . "</span>";
+              ?>
+              <div class="stock-bar">
+                <span class="progress-<?= $level ?>" style="width: <?= min(100, ($stock / 100) * 100) ?>%"></span>
+              </div>
             </td>
             <td>₱<?= number_format($row['price'], 2); ?></td>
             <td>
               <div class="action-buttons">
                 <button class="btn-edit"
-                  onclick="openEditForm(<?= $row['id']; ?>, '<?= htmlspecialchars($row['product_name'], ENT_QUOTES); ?>', '<?= htmlspecialchars($row['category']); ?>', <?= $row['quantity']; ?>, <?= $row['price']; ?>)">
+                  onclick="openEditForm(<?= $row['id']; ?>, <?= $row['quantity']; ?>, <?= $row['price']; ?>)">
                   <i class='bx bxs-edit'></i> Edit
                 </button>
-                <a href="?delete=<?= $row['id']; ?>" class="btn-delete"
-                  onclick="return confirm('Are you sure you want to delete this product?');">
-                  <i class='bx bxs-trash'></i> Delete
-                </a>
               </div>
             </td>
           </tr>
           <?php endwhile; ?>
-          <?php else: ?>
-          <tr>
-            <td colspan="7" style="text-align: center; padding: 20px;">No products found matching your criteria</td>
-          </tr>
-          <?php endif; ?>
         </tbody>
       </table>
     </div>
   </section>
 
+  <!-- Edit Product Modal -->
   <div class="modal-overlay" id="editFormModal">
     <div class="modal-container">
       <div class="modal-header">
@@ -315,24 +236,6 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
       </div>
       <form method="POST" action="">
         <input type="hidden" name="id" id="edit_id">
-        <div class="form-group">
-          <label for="product_name">Product Name</label>
-          <input type="text" id="edit_product_name" name="product_name" required>
-        </div>
-        <div class="form-group">
-          <label for="category">Category</label>
-          <select id="edit_category" name="category">
-            <?php 
-            // Reset category result pointer
-            mysqli_data_seek($categoryResult, 0);
-            while($cat = mysqli_fetch_assoc($categoryResult)): 
-            ?>
-            <option value="<?= htmlspecialchars($cat['category']) ?>">
-              <?= htmlspecialchars($cat['category']) ?>
-            </option>
-            <?php endwhile; ?>
-          </select>
-        </div>
         <div class="form-group">
           <label for="quantity">Quantity</label>
           <input type="number" id="edit_quantity" name="quantity" min="0" required>
@@ -349,57 +252,11 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
     </div>
   </div>
 
-
-  <div class="modal-overlay" id="addFormModal">
-    <div class="modal-container">
-      <div class="modal-header">
-        <h2>Add New Product</h2>
-        <button class="close-btn" onclick="closeAddForm()">&times;</button>
-      </div>
-      <form method="POST" action="" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="product_name">Product Name</label>
-          <input type="text" id="add_product_name" name="product_name" required>
-        </div>
-        <div class="form-group">
-          <label for="category">Category</label>
-          <select id="add_category" name="category">
-            <?php 
-            // Reset category result pointer
-            mysqli_data_seek($categoryResult, 0);
-            while($cat = mysqli_fetch_assoc($categoryResult)): 
-            ?>
-            <option value="<?= htmlspecialchars($cat['category']) ?>">
-              <?= htmlspecialchars($cat['category']) ?>
-            </option>
-            <?php endwhile; ?>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="quantity">Quantity</label>
-          <input type="number" id="add_quantity" name="quantity" min="0" value="0" required>
-        </div>
-        <div class="form-group">
-          <label for="price">Price (₱)</label>
-          <input type="number" id="add_price" name="price" min="0" step="0" value="0" required>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn-cancel" onclick="closeAddForm()">Cancel</button>
-          <button type="submit" class="btn-save" name="add_product">Add Product</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <script>
-  // Functions for Edit Modal
-  function openEditForm(id, name, category, quantity, price) {
+  function openEditForm(id, quantity, price) {
     document.getElementById('edit_id').value = id;
-    document.getElementById('edit_product_name').value = name;
-    document.getElementById('edit_category').value = category;
     document.getElementById('edit_quantity').value = quantity;
     document.getElementById('edit_price').value = price;
-
     document.getElementById('editFormModal').style.display = 'flex';
   }
 
@@ -416,9 +273,13 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
     document.getElementById('addFormModal').style.display = 'none';
   }
 
+  function resetFilters() {
+    console.log("Reset clicked - redirecting to inventory_staff.php");
+    window.location.href = 'inventory_staff.php';
+  }
   // Function to reset filters
   function resetFilters() {
-    window.location.href = 'inventory.php';
+    window.location.href = 'inventory_staff.php';
   }
 
   // Make filters apply on change (optional - enable if you want instant filtering)

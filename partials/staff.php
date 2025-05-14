@@ -42,15 +42,9 @@
         <li class="nav-link">
           <a href="../views/inventory.php">
             <i class="bx bxs-cart icon"></i>
-            <span class="text nav-text">Inventory</span>
+            <span class="text nav-text">Product</span>
           </a>
         </li>
-        </li>
-        <li class="nav-link">
-          <a href="../views/report.php">
-            <i class="bx bxs-report icon"></i>
-            <span class="text nav-text">Report</span>
-          </a>
         </li>
       </ul>
     </div>

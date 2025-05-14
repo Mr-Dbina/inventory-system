@@ -21,26 +21,29 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
         $dbConnection = getDatabaseConnection();
 
         if ($dbConnection) {
+            // Updated this query - changed first_name, last_name to fullname, date_of_birth
             $statement = $dbConnection->prepare(
-                "SELECT id, first_name, last_name, phone, address, role, password, created_at FROM users WHERE email = ?"
+                "SELECT id, fullname, date_of_birth, phone, address, password, created_at FROM users WHERE email = ?"
             );
 
             if ($statement) {
                 $statement->bind_param('s', $email);
                 $statement->execute();
-                $statement->bind_result($id, $first_name, $last_name, $phone, $address, $role, $stored_password, $created_at);
+                // Updated the bind_result parameters - removed position and fixed variable names
+                $statement->bind_result($id, $fullname, $date_of_birth, $phone, $address, $stored_password, $created_at);
 
                 if ($statement->fetch()) {
                     // Verify the password
                     if (password_verify($password, $stored_password)) {
-                        // Store user data in session
+                        // Store user data in session - fixed variable names
                         $_SESSION["id"] = $id;
-                        $_SESSION["first_name"] = $first_name;
-                        $_SESSION["last_name"] = $last_name;
+                        $_SESSION["fullname"] = $fullname;
+                        $_SESSION["date_of_birth"] = $date_of_birth; // Fixed from last_name to date_of_birth
                         $_SESSION["email"] = $email;
                         $_SESSION["phone"] = $phone;
                         $_SESSION["address"] = $address;
-                        $_SESSION["role"] = $role;
+                        // Removed position/role as it's not in the database
+                        // $_SESSION["position"] = $role;
                         $_SESSION["created_at"] = $created_at;
 
                         header("Location: ../views/profile.php");
@@ -101,7 +104,6 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
               value="<?= htmlspecialchars($email) ?>" required />
           </div>
         </div>
-
         <div class="input-div pass">
           <div class="i">
             <i class="bx bxs-lock-alt"></i>
@@ -110,7 +112,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
             <h5>Password</h5>
             <input id="password" class="input <?= !empty($error) ? 'is-invalid' : '' ?>" type="password" name="password"
               required />
-            <i id="password-toggle" class='bx bxs-lock-open-alt icon-right'
+            <i id="password-toggle" class="bx bxs-lock icon-right"
               style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: #FEDF05; cursor: pointer;"></i>
           </div>
         </div>
@@ -128,6 +130,19 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
   </div>
 
   <script type="text/javascript" src="../js/responsive.js"></script>
-</body>
 
-</html>
+  <script>
+  // Add password toggle functionality for the login page
+  document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const passwordToggle = document.getElementById('password-toggle');
+
+    passwordToggle.addEventListener('click', function() {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      this.classList.toggle('bxs-lock');
+      this.classList.toggle('bxs-lock-open-alt');
+    });
+  }); <
+  /body> <
+  /html>
