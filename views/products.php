@@ -153,8 +153,9 @@ if (!$result) {
             <?php endwhile; ?>
           </select>
         </div>
-
-        <button type="submit" class="btn-reset">Reset</button>
+        <button type="button" class="btn-reset" onclick="resetFiltersWithAnimation()" title="ResetFilters">
+          <i class='bx bx-refresh'></i>
+        </button>
       </form>
 
       <table>
@@ -185,11 +186,11 @@ if (!$result) {
               <div class="action-buttons">
                 <button class="btn-edit"
                   onclick="openEditForm(<?= $row['id']; ?>, '<?= htmlspecialchars(addslashes($row['product_name'])); ?>', '<?= htmlspecialchars($row['category']); ?>', <?= $row['price']; ?>)">
-                  <i class='bx bxs-edit'></i> Edit
+                  <i class='bx bxs-edit'></i>
                 </button>
                 <a href="?delete=<?= $row['id']; ?>&csrf_token=<?= $_SESSION['csrf_token']; ?>" class="btn-delete"
                   onclick="return confirm('Are you sure you want to delete this product?');">
-                  <i class='bx bxs-trash'></i> Delete
+                  <i class='bx bxs-trash'></i>
                 </a>
               </div>
             </td>
@@ -349,6 +350,24 @@ if (!$result) {
       document.getElementById('add_new_category_group').style.display = 'none';
     }
   });
+  // Function to reset filters
+  function ResetFilters() {
+    window.location.href = 'inventory.php';
+  }
+
+  // New function with animation for reset button
+  function resetFiltersWithAnimation() {
+    // Get the icon element
+    const refreshIcon = document.querySelector('.btn-reset i');
+
+    // Add rotation animation class
+    refreshIcon.classList.add('rotate-animation');
+
+    // Reset filters after animation completes
+    setTimeout(function() {
+      window.location.href = 'product.php';
+    }, 600); // Wait for animation to complete
+  }
   </script>
 </body>
 

@@ -11,19 +11,12 @@
     </div>
     <i class="bx bx-chevron-right toggle"></i>
   </header>
-
   <div class="menu-bar">
     <div class="menu">
       <ul class="menu-links">
-        <li>
-          <a href="../views/profile.php">
-            <i class="bx bxs-user icon"></i>
-            <span class="text nav-text">Profile</span>
-          </a>
-        </li>
         <li class="nav-link">
           <a href="../views/team.php">
-            <i class="bx bxs-user-account icon"></i>
+            <i class='bx bxs-group icon'></i>
             <span class="text nav-text">Team</span>
           </a>
         </li>

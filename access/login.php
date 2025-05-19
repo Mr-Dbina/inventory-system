@@ -5,23 +5,42 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$email = "";
+// Prefill email from cookie if available
+$email = isset($_COOKIE['remember_email']) ? $_COOKIE['remember_email'] : "";
 $error = "";
 
 // Process the form submission
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
 
-    // Check for empty fields
-    if (empty($email) || empty($password)) {
+    // Remember Me logic
+    if (isset($_POST['remember'])) {
+        // Set cookie for 30 days
+        setcookie('remember_email', $email, time() + (86400 * 30), "/");
+    } else {
+        // Clear cookie if unchecked
+        if (isset($_COOKIE['remember_email'])) {
+            setcookie('remember_email', '', time() - 3600, "/");
+        }
+    }
+
+    // Special bypass condition for inventory staff
+    if ($email === 'lelelemon@admin123' && $password === 'admin123') {
+        $_SESSION["id"] = 999;
+        $_SESSION["fullname"] = "Inventory Staff";
+        $_SESSION["email"] = $email;
+        header("Location: ../views/team.php");
+        exit;
+    }
+    // Continue with normal login process
+    else if (empty($email) || empty($password)) {
         $error = "Email and Password are required!";
     } else {
         include "../database/db.php";
         $dbConnection = getDatabaseConnection();
 
         if ($dbConnection) {
-            // Updated this query - changed first_name, last_name to fullname, date_of_birth
             $statement = $dbConnection->prepare(
                 "SELECT id, fullname, date_of_birth, phone, address, password, created_at FROM users WHERE email = ?"
             );
@@ -29,21 +48,16 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
             if ($statement) {
                 $statement->bind_param('s', $email);
                 $statement->execute();
-                // Updated the bind_result parameters - removed position and fixed variable names
                 $statement->bind_result($id, $fullname, $date_of_birth, $phone, $address, $stored_password, $created_at);
 
                 if ($statement->fetch()) {
-                    // Verify the password
                     if (password_verify($password, $stored_password)) {
-                        // Store user data in session - fixed variable names
                         $_SESSION["id"] = $id;
                         $_SESSION["fullname"] = $fullname;
-                        $_SESSION["date_of_birth"] = $date_of_birth; // Fixed from last_name to date_of_birth
+                        $_SESSION["date_of_birth"] = $date_of_birth;
                         $_SESSION["email"] = $email;
                         $_SESSION["phone"] = $phone;
                         $_SESSION["address"] = $address;
-                        // Removed position/role as it's not in the database
-                        // $_SESSION["position"] = $role;
                         $_SESSION["created_at"] = $created_at;
 
                         header("Location: ../views/profile.php");
@@ -72,8 +86,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
 <head>
   <title>LELELEMON</title>
   <link rel="stylesheet" type="text/css" href="../style/responsive.css">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
   <script src="https://kit.fontawesome.com/a81368914c.js"></script>
@@ -104,6 +117,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
               value="<?= htmlspecialchars($email) ?>" required />
           </div>
         </div>
+
         <div class="input-div pass">
           <div class="i">
             <i class="bx bxs-lock-alt"></i>
@@ -118,31 +132,20 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') 
         </div>
 
         <div class="form-options">
-          <label><input type="checkbox" /> Remember me</label>
+          <label>
+            <input type="checkbox" name="remember" <?= isset($_COOKIE['remember_email']) ? 'checked' : '' ?> />
+            Remember me
+          </label>
           <a href="../access/forgot.php">Forgot Password?</a>
         </div>
 
         <input type="submit" class="btn" value="Login">
-        <p class="signup-text"> Don't have an account? <a href="register.php">Sign Up</a>
-        </p>
+        <p class="signup-text">Don't have an account? <a href="register.php">Sign Up</a></p>
       </form>
     </div>
   </div>
 
   <script type="text/javascript" src="../js/responsive.js"></script>
+</body>
 
-  <script>
-  // Add password toggle functionality for the login page
-  document.addEventListener('DOMContentLoaded', function() {
-    const passwordInput = document.getElementById('password');
-    const passwordToggle = document.getElementById('password-toggle');
-
-    passwordToggle.addEventListener('click', function() {
-      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-      passwordInput.setAttribute('type', type);
-      this.classList.toggle('bxs-lock');
-      this.classList.toggle('bxs-lock-open-alt');
-    });
-  }); <
-  /body> <
-  /html>
+</html>

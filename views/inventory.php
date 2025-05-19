@@ -96,40 +96,11 @@ if (!empty($_GET['stock']) && $_GET['stock'] != 'All Stock Levels') {
     }
 }
 
-// Add price range filter condition
-if (!empty($_GET['price_min']) || !empty($_GET['price_max'])) {
-    if (!empty($_GET['price_min']) && !empty($_GET['price_max'])) {
-        $min = (float)$_GET['price_min'];
-        $max = (float)$_GET['price_max'];
-        $conditions[] = "price BETWEEN $min AND $max";
-    } elseif (!empty($_GET['price_min'])) {
-        $min = (float)$_GET['price_min'];
-        $conditions[] = "price >= $min";
-    } elseif (!empty($_GET['price_max'])) {
-        $max = (float)$_GET['price_max'];
-        $conditions[] = "price <= $max";
-    }
-}
-
 // Construct WHERE clause if any conditions exist
 $where = count($conditions) ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
-// Add sorting parameter
-$sort = isset($_GET['sort']) ? $_GET['sort'] : 'updated_at';
-$direction = isset($_GET['direction']) ? $_GET['direction'] : 'ASC';
-
-// Validate sort field to prevent SQL injection
-$allowed_sort_fields = ['id', 'product_name', 'category', 'quantity', 'price', 'updated_at'];
-if (!in_array($sort, $allowed_sort_fields)) {
-    $sort = 'updated_at';
-}
-
-// Validate direction to prevent SQL injection
-if ($direction != 'ASC' && $direction != 'DESC') {
-    $direction = 'ASC';
-}
-
-$query = "SELECT * FROM products $where ORDER BY $sort $direction";
+// Default sort by updated_at
+$query = "SELECT * FROM products $where ORDER BY updated_at ASC";
 
 $result = mysqli_query($conn, $query);
 if (!$result) {
@@ -150,8 +121,7 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inventory Management</title>
   <link rel="stylesheet" href="../style/inventory.css">
-  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-  </style>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
 <body>
@@ -164,7 +134,7 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
         </button>
       </div>
 
-      <!-- Enhanced filter form with more options -->
+      <!-- Simplified filter form with removed price range and sorting options -->
       <form method="GET" class="filters" id="filterForm">
         <div class="filter-group">
           <label for="search">Search</label>
@@ -195,40 +165,10 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
           </select>
         </div>
 
-        <div class="filter-group">
-          <label>Price Range (₱)</label>
-          <div class="price-range">
-            <input type="number" name="price_min" placeholder="Min" min="0" step="0.01"
-              value="<?= htmlspecialchars($_GET['price_min'] ?? '') ?>">
-            <span>to</span>
-            <input type="number" name="price_max" placeholder="Max" min="0" step="0.01"
-              value="<?= htmlspecialchars($_GET['price_max'] ?? '') ?>">
-          </div>
-        </div>
-
-        <div class="filter-group">
-          <label for="sort">Sort By</label>
-          <select name="sort" id="sort">
-            <option value="updated_at" <?= ($_GET['sort'] ?? 'updated_at') == 'updated_at' ? 'selected' : '' ?>>Last
-              Updated</option>
-            <option value="product_name" <?= ($_GET['sort'] ?? '') == 'product_name' ? 'selected' : '' ?>>Product Name
-            </option>
-            <option value="price" <?= ($_GET['sort'] ?? '') == 'price' ? 'selected' : '' ?>>Price</option>
-            <option value="quantity" <?= ($_GET['sort'] ?? '') == 'quantity' ? 'selected' : '' ?>>Quantity</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label for="direction">Order</label>
-          <select name="direction" id="direction">
-            <option value="ASC" <?= ($_GET['direction'] ?? 'ASC') == 'ASC' ? 'selected' : '' ?>>Ascending</option>
-            <option value="DESC" <?= ($_GET['direction'] ?? '') == 'DESC' ? 'selected' : '' ?>>Descending</option>
-          </select>
-        </div>
-
         <div class="filter-actions">
-          <button type="submit" class="btn-filter">Apply Filters</button>
-          <button type="button" class="btn-reset" onclick="resetFilters()">Reset</button>
+          <button type="button" class="btn-reset" onclick="resetFiltersWithAnimation()" title="ResetFilters">
+            <i class='bx bx-refresh'></i>
+          </button>
         </div>
       </form>
 
@@ -236,15 +176,13 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
       <div style="margin-bottom: 15px; font-size: 14px; color: #555;">
         <?php 
         $count = mysqli_num_rows($result);
-        echo "Showing {$count} product" . ($count != 1 ? "s" : "");
+        echo "Showing {$count} item" . ($count != 1 ? "s" : "");
         
         // Show applied filters
         $appliedFilters = [];
         if (!empty($_GET['search'])) $appliedFilters[] = "Search: " . htmlspecialchars($_GET['search']);
         if (!empty($_GET['category']) && $_GET['category'] != 'All Categories') $appliedFilters[] = "Category: " . htmlspecialchars($_GET['category']);
         if (!empty($_GET['stock']) && $_GET['stock'] != 'All Stock Levels') $appliedFilters[] = "Stock: " . htmlspecialchars($_GET['stock']);
-        if (!empty($_GET['price_min'])) $appliedFilters[] = "Min Price: ₱" . htmlspecialchars($_GET['price_min']);
-        if (!empty($_GET['price_max'])) $appliedFilters[] = "Max Price: ₱" . htmlspecialchars($_GET['price_max']);
         
         if (!empty($appliedFilters)) {
           echo " (Filtered by: " . implode(", ", $appliedFilters) . ")";
@@ -258,7 +196,6 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
             <th>ID</th>
             <th>Item</th>
             <th>Category</th>
-            <th>SKU</th>
             <th>Current Stock</th>
             <th>Price</th>
             <th>Action</th>
@@ -272,7 +209,6 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
             <td><img src="<?= $row['image_path']; ?>" width="40" padding="10px">
               <?= htmlspecialchars($row['product_name']); ?></td>
             <td><span class="badge"><?= htmlspecialchars($row['category']); ?></span></td>
-            <td><?= htmlspecialchars($row['sku'] ?? 'N/A'); ?></td>
             <td>
               <?php 
                   $stock = $row['quantity'];
@@ -285,13 +221,13 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
             <td>₱<?= number_format($row['price'], 2); ?></td>
             <td>
               <div class="action-buttons">
-                <button class="btn-edit"
-                  onclick="openEditForm(<?= $row['id']; ?>, '<?= htmlspecialchars($row['product_name'], ENT_QUOTES); ?>', '<?= htmlspecialchars($row['category']); ?>', <?= $row['quantity']; ?>, <?= $row['price']; ?>)">
-                  <i class='bx bxs-edit'></i> Edit
+                <button class="btn-edit" onclick="openEditForm(<?= $row['id']; ?>, '<?= htmlspecialchars($row['product_name'], ENT_QUOTES); ?>',
+                   '<?= htmlspecialchars($row['category']); ?>', <?= $row['quantity']; ?>, <?= $row['price']; ?>)">
+                  <i class='bx bxs-edit'></i>
                 </button>
                 <a href="?delete=<?= $row['id']; ?>" class="btn-delete"
                   onclick="return confirm('Are you sure you want to delete this product?');">
-                  <i class='bx bxs-trash'></i> Delete
+                  <i class='bx bxs-trash'></i>
                 </a>
               </div>
             </td>
@@ -299,7 +235,7 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
           <?php endwhile; ?>
           <?php else: ?>
           <tr>
-            <td colspan="7" style="text-align: center; padding: 20px;">No products found matching your criteria</td>
+            <td colspan="6" style="text-align: center; padding: 20px;">No products found matching your criteria</td>
           </tr>
           <?php endif; ?>
         </tbody>
@@ -383,6 +319,10 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
           <label for="price">Price (₱)</label>
           <input type="number" id="add_price" name="price" min="0" step="0" value="0" required>
         </div>
+        <div class="form-group">
+          <label for="image">Product Image (Optional)</label>
+          <input type="file" id="add_image" name="image" accept="image/*">
+        </div>
         <div class="form-actions">
           <button type="button" class="btn-cancel" onclick="closeAddForm()">Cancel</button>
           <button type="submit" class="btn-save" name="add_product">Add Product</button>
@@ -392,7 +332,6 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
   </div>
 
   <script>
-  // Functions for Edit Modal
   function openEditForm(id, name, category, quantity, price) {
     document.getElementById('edit_id').value = id;
     document.getElementById('edit_product_name').value = name;
@@ -417,8 +356,22 @@ $categoryResult = mysqli_query($conn, $categoryQuery);
   }
 
   // Function to reset filters
-  function resetFilters() {
+  function ResetFilters() {
     window.location.href = 'inventory.php';
+  }
+
+  // New function with animation for reset button
+  function resetFiltersWithAnimation() {
+    // Get the icon element
+    const refreshIcon = document.querySelector('.btn-reset i');
+
+    // Add rotation animation class
+    refreshIcon.classList.add('rotate-animation');
+
+    // Reset filters after animation completes
+    setTimeout(function() {
+      window.location.href = 'inventory.php';
+    }, 600); // Wait for animation to complete
   }
 
   // Make filters apply on change (optional - enable if you want instant filtering)
