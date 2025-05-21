@@ -1,16 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
+/* ==================== 1. BASE STYLES ==================== */
 * {
   font-family: "Poppins", sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-ol, ul {
-  padding-left: 0rem !important;
-}
 body {
-  background: var(--body-color)
+  display: flex;
+  height: 100vh;
+  background: var(--body-color);
+  transition: background-color 0.3s ease;
 }
 
 /* ==================== 2. CSS VARIABLES (LIGHT/DARK MODE) ==================== */
@@ -25,7 +26,7 @@ body {
   --toggle-color: #ddd;
   --text-color: #332f2f;
   
-  /* Simplified transitions with reduced duration */
+  /* Transitions */
   --tran-02: all 0.2s ease;
   --tran-03: all 0.3s ease;
 }
@@ -41,18 +42,8 @@ body.dark {
   --text-color: #CCC;
 }
 
-/* ==================== 3. BASE LAYOUT STRUCTURE ==================== */
-body {
-  display: flex;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-  background: var(--body-color);
-  transition: background-color 0.3s ease;
-}
-
-/* ==================== 4. SIDEBAR COMPONENTS ==================== */
-/* 4.1 Sidebar Base */
+/* ==================== 3. SIDEBAR COMPONENTS ==================== */
+/* 3.1 Sidebar Base */
 .sidebar {
   position: fixed;
   top: 0;
@@ -62,7 +53,7 @@ body {
   padding: 10px 14px;
   background: var(--sidebar-color);
   z-index: 100;
-  transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
+  transition: var(--tran-03);
 }
 
 .sidebar.close {
@@ -79,7 +70,7 @@ body {
   color: var(--sidebar-text-color);
   white-space: nowrap;
   opacity: 1;
-  transition: opacity 0.2s ease;
+  transition: var(--tran-02);
 }
 
 .sidebar.close .text {
@@ -92,7 +83,7 @@ body {
   align-items: center;
 }
 
-/* 4.2 Sidebar Header */
+/* 3.2 Sidebar Header */
 .sidebar header {
   position: relative;
 }
@@ -123,7 +114,7 @@ body {
   margin-left: 6px;
 }
 
-/* 4.3 Sidebar Toggle Button */
+/* 3.3 Sidebar Toggle Button */
 .sidebar header .toggle {
   position: absolute;
   top: 50%;
@@ -139,7 +130,7 @@ body {
   color: var(--sidebar-color);
   font-size: 22px;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: var(--tran-03);
 }
 
 .sidebar.close header .toggle {
@@ -150,7 +141,7 @@ body.dark .sidebar header .toggle {
   color: var(--text-color);
 }
 
-/* 4.4 Sidebar Navigation Items */
+/* 3.4 Sidebar Navigation Items */
 .sidebar li {
   height: 60px;
   margin-top: 5px;
@@ -167,12 +158,12 @@ body.dark .sidebar header .toggle {
   margin-left: -10px;
   min-width: 60px;
   color: var(--text-color);
-  transition: color 0.2s ease;
+  transition: var(--tran-02);
 }
 
 .sidebar li .text {
   color: var(--text-color);
-  transition: color 0.2s ease;
+  transition: var(--tran-02);
 }
 
 .sidebar li a {
@@ -181,7 +172,7 @@ body.dark .sidebar header .toggle {
   display: flex;
   align-items: center;
   border-radius: 6px;
-  transition: background-color 0.2s ease;
+  transition: var(--tran-02);
   padding: 0 10px;
   gap: 20px;
   width: 100%;
@@ -201,7 +192,7 @@ body.dark .sidebar li a:hover .text {
   color: var(--text-color);
 }
 
-/* 4.5 Sidebar Menu Bar */
+/* 3.5 Sidebar Menu Bar */
 .sidebar .menu-bar {
   height: calc(100% - 50px);
   display: flex;
@@ -209,7 +200,7 @@ body.dark .sidebar li a:hover .text {
   justify-content: space-between;
 }
 
-/* 4.6 Sidebar Dark Mode Switch */
+/* 3.6 Sidebar Dark Mode Switch */
 .menu-bar .mode {
   position: relative;
   border-radius: 6px;
@@ -282,10 +273,10 @@ body.dark .switch::before {
   left: 24px;
 }
 
-/* ==================== 5. MAIN CONTENT AREA ==================== */
+/* ==================== 4. MAIN CONTENT AREA ==================== */
 .main-content {
   position: fixed;
-  left: 88px; /* Align with closed sidebar by default */
+  left: 88px;
   top: 0;
   right: 0;
   bottom: 0;
@@ -295,7 +286,7 @@ body.dark .switch::before {
 }
 
 .sidebar:not(.close) ~ .main-content {
-  left: 250px; /* When sidebar is open */
+  left: 250px;
 }
 
 .home {
@@ -304,7 +295,7 @@ body.dark .switch::before {
   left: 250px;
   width: calc(100% - 250px);
   background: var(--body-color);
-  transition: left 0.3s ease, width 0.3s ease;
+  transition: var(--tran-03);
 }
 
 .sidebar.close ~ .home {
@@ -316,12 +307,11 @@ body.dark .switch::before {
   font-size: 30px;
   font-weight: 500;
   font-style: bold;
-  color: var(--sidebar-text-color);
+  color: #FEDF05;
   padding: 8px 40px;
 }
 
-/* ==================== 6. PROFILE PAGE COMPONENTS ==================== */
-/* Container for profile page */
+/* ==================== 5. PROFILE PAGE COMPONENTS ==================== */
 .container-profile {
   width: 100%;
   max-width: 1200px;
@@ -331,30 +321,11 @@ body.dark .switch::before {
   margin-left: auto;
 }
 
-.profile-sidebar {
-  background-color: #58b0e0;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
 .profile-card {
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-}
-
-.avatar-container {
-  text-align: center;
-  padding: 20px 0;
-  position: relative;
-}
-
-.avatar {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  margin: 0 auto;
 }
 
 .headings {
@@ -373,7 +344,7 @@ body.dark .switch::before {
 
 .contact-info li {
   padding: 8px 0;
-  border-bottom: 1px dotted #434955;
+  border-bottom: 1px dotted #FEDF05;
   display: flex;
   align-items: center;
 }
@@ -384,24 +355,117 @@ body.dark .switch::before {
 
 .contact-info i {
   margin-right: 10px;
-  color: #58b0e0;
+  color: #FEDF05;
 }
 
 .footer-bar {
   height: 20px;
-  background-color: #58b0e0;
+  background-color: #FEDF05;
 }
 
 /* Tab styling */
+.nav-pills .nav-link {
+  color: #000;
+  transition: color 0.3s ease; /* Add transition for smooth hover effect */
+}
+
 .nav-pills .nav-link.active {
-  background-color: #58b0e0;
+  background-color: #FEDF05;
+  color: #000;
+}
+.nav-pills .nav-link:hover {
+  color: #FEDF05;
+}
+.btn-primary {
+  background-color: #FEDF05;
+  border-color: #FEDF05;
+  color: #000;
+}
+
+.nav-pills #profile-tab.active,
+.nav-pills #password-tab.active {
+  background-color: #FEDF05;
+  color: #000;
+}
+.nav-pills #password-tab.active {
+  background-color: #FEDF05;
+  color: #000;
+}
+
+.nav-pills .nav-link.active {
+  background-color: #FEDF05;
+  color: #000;
+}
+
+.nav-link.custom-hover-text {
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+.nav-link.custom-hover-text:hover {
+  color: #FEDF05;
+}
+
+/* Change Update Profile button color */
+.btn-primary {
+  background-color: #FEDF05;
+  border-color: #FEDF05;
+  color: #000;
+}
+
+.btn-primary:hover {
+  background-color: #e5c800;
+  border-color: #e5c800;
+  color: #000;
+}
+
+/* Change success alert styling */
+.alert-success {
+  background-color: #fffd95;
+  border-color: #dcff00;
+  color: #000;
+}
+
+/* Style for toggle password buttons to match */
+.btn-outline-secondary {
+  border-color: #FEDF05;
+  color: #000;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #FEDF05;
+  color: #000;
+}
+
+/* Dark mode overrides */
+body.dark .nav-pills .nav-link.active {
+  background-color: #FEDF05;
+  color: #000;
+}
+
+body.dark .btn-primary {
+  background-color: #FEDF05;
+  border-color: #FEDF05;
+  color: #000;
+}
+
+body.dark .btn-primary:hover {
+  background-color: #e5c800;
+  border-color: #e5c800;
+  color: #000;
+}
+
+body.dark .alert-success {
+  background-color: #fffd95;
+  border-color: #dcff00;
+  color: #000;
 }
 
 .tab-pane {
   padding: 20px;
 }
 
-/* ==================== 7. DARK MODE OVERRIDES ==================== */
+/* ==================== 6. DARK MODE OVERRIDES ==================== */
 body.dark .profile-card {
   background-color: #242526;
   color: #CCC;
@@ -426,7 +490,7 @@ body.dark .headings p.text-dark {
   color: #CCC !important;
 }
 
-/* ==================== 8. RESPONSIVE DESIGN ==================== */
+/* ==================== 7. RESPONSIVE DESIGN ==================== */
 @media (max-width: 992px) {
   .main-content {
     left: 0;
@@ -435,14 +499,143 @@ body.dark .headings p.text-dark {
   }
 
   .sidebar.close ~ .main-content {
-    left: 88px; /* Match closed sidebar width */
+    left: 88px;
     width: calc(100% - 88px);
   }
-
-  .col-md-4 {
-    margin-bottom: 20px;
-  }
 }
+
 .transition-enabled {
   transition: all 0.5s ease;
+}
+
+.profile-image-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 20px;
+  cursor: pointer;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #FEDF05;
+}
+
+.camera-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #FEDF05;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: var(--sidebar-color);
+  border: 2px solid var(--sidebar-color);
+}
+
+.camera-icon i {
+  font-size: 20px;
+}
+
+.profile-options {
+  position: absolute;
+  bottom: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: none;
+  z-index: 100;
+  width: 200px;
+}
+
+.profile-option {
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.profile-option:hover {
+  background: #f0f0f0;
+}
+
+.profile-option i {
+  font-size: 18px;
+  color: #FEDF05;
+}
+
+.user-info-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.user-info-header i {
+  font-size: 24px;
+  color: var(--primary-color);
+}
+
+ol,
+ul {
+  padding-left: 0rem !important;
+}
+
+/* Profile Picture Viewer Modal */
+.profile-picture-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.profile-picture-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.full-profile-image {
+  max-width: 100%;
+  max-height: 90vh;
+  border: 4px solid #FEDF05;
+  border-radius: 8px;
+}
+
+.close-button {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  background: #FEDF05;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: #333;
+  border: none;
+  font-size: 20px;
+}
+
+.close-button i {
+  font-size: 24px;
 }

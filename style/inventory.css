@@ -458,7 +458,7 @@ th {
   border: none;
   font-size: 18px;
   color: #fff;
-  background-color: #DC7C00;
+  background-color: #FEDF05;
   overflow: hidden;
   box-shadow: 0 0 0 0 transparent;
   transition: all 0.3s ease-in-out;
@@ -471,7 +471,7 @@ th {
 }
 
 .btn-reset:hover {
-  background-color: #c06e00;
+  background-color: #FEDF05;
 }
 
 .rotate {

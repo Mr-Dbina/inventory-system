@@ -352,7 +352,7 @@ if (!$result) {
   });
   // Function to reset filters
   function ResetFilters() {
-    window.location.href = 'inventory.php';
+    window.location.href = 'products.php';
   }
 
   // New function with animation for reset button
@@ -365,7 +365,7 @@ if (!$result) {
 
     // Reset filters after animation completes
     setTimeout(function() {
-      window.location.href = 'product.php';
+      window.location.href = 'products.php';
     }, 600); // Wait for animation to complete
   }
   </script>
